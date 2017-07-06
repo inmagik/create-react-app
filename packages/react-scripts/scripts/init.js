@@ -132,6 +132,27 @@ module.exports = function(
     }
   }
 
+  // Install inmagik stuff
+  {
+    let command;
+    let args;
+
+    if (useYarn) {
+      command = 'yarnpkg';
+      args = ['add'];
+    } else {
+      command = 'npm';
+      args = ['install', '--save', verbose && '--verbose'].filter(e => e);
+    }
+    args.push('redux', 'react-redux', 'redux-saga', 'reselect', 'react-router-dom', 'superagent');
+
+    const proc = spawn.sync(command, args, { stdio: 'inherit' });
+    if (proc.status !== 0) {
+      console.error(`\`${command} ${args.join(' ')}\` failed`);
+      return;
+    }
+  }
+
   // Display the most elegant way to cd.
   // This needs to handle an undefined originalDirectory for
   // backward compatibility with old global-cli's.
@@ -145,6 +166,10 @@ module.exports = function(
   // Change displayed command to yarn instead of yarnpkg
   const displayedCommand = useYarn ? 'yarn' : 'npm';
 
+  console.log();
+  console.log(
+    chalk.cyan(' ~ INMAGIK React Starter Project ~ ')
+  );
   console.log();
   console.log(`Success! Created ${appName} at ${appPath}`);
   console.log('Inside that directory, you can run several commands:');
